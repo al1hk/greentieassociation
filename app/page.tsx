@@ -282,7 +282,7 @@ export default function App() {
             <Button variant="primary" onClick={() => document.getElementById('events')?.scrollIntoView({behavior: 'smooth'})}>
               View Latest Events
             </Button>
-            <Button variant="white" onClick={() => document.getElementById('contact')?.scrollIntoView({behavior: 'smooth'})}>
+            <Button variant="white" onClick={() => document.getElementById('donate')?.scrollIntoView({behavior: 'smooth'})}>
               Become a Sponsor
             </Button>
           </div>
@@ -347,7 +347,7 @@ export default function App() {
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
         <div className="container mx-auto px-6">
           <SectionTitle 
-            title="Past Events" 
+            title="Our Events" 
             subtitle="Celebrating our community achievements and the generous spirits that make them possible."
           />
 
@@ -479,7 +479,7 @@ export default function App() {
       </section>
 
       {/* Payment / Donation Info - MODIFIED */}
-      <section className="py-24 bg-emerald-950 text-white relative overflow-hidden">
+      <section id="donate" className="py-24 bg-emerald-950 text-white relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-emerald-900/50 to-transparent pointer-events-none"></div>
