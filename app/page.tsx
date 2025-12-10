@@ -11,9 +11,10 @@ import {
   Facebook, 
   ArrowRight, 
   CreditCard,
-  Award
+  Award,
+  Users
 } from 'lucide-react';
-import { Sponsor, NavItem, EventDetails } from '@/app/types';
+import { Sponsor, NavItem, EventDetails } from './types';
 
 // --- Constants & Data ---
 
@@ -22,7 +23,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'Our Sponsors', href: '#sponsors' },
-  { label: 'Blogs', href: '#blogs' },
   { label: 'Contact', href: '#contact' },
 ];
 
@@ -65,10 +65,20 @@ const SPONSORS: Sponsor[] = [
   { id: '9', name: 'Nelsons', tier: 'BRONZE',logoUrl:"https://static.wixstatic.com/media/f33457_7b324f00f9aa409584ac786d19175863~mv2.png/v1/fill/w_460,h_70,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Nelsons%20Logo.png" },
 ];
 
+// --- Helper Functions ---
+
+const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  e.preventDefault();
+  const element = document.querySelector(href);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
 // --- Components ---
 
 const SectionTitle: React.FC<{ title: string; subtitle?: string; color?: 'dark' | 'light' }> = ({ title, subtitle, color = 'dark' }) => (
-  <div className="text-center mb-16 relative">
+  <div className="text-center mb-16 relative px-4">
     <h2 className={`text-3xl md:text-5xl font-bold uppercase tracking-wider mb-6 ${color === 'light' ? 'text-white' : 'text-slate-800'}`}>
       {title}
     </h2>
@@ -90,9 +100,9 @@ const Button: React.FC<{
   const baseStyle = "inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold transition-all duration-500 tracking-wide text-sm md:text-base";
   
   const variants = {
-    primary: "bg-emerald-700 text-white hover:bg-emerald-800 shadow-xl hover:shadow-2xl hover:-translate-y-1",
-    outline: "border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-700",
-    white: "bg-white text-emerald-900 hover:bg-emerald-50 shadow-lg hover:shadow-xl hover:-translate-y-1",
+    primary: "bg-emerald-700 text-white hover:bg-emerald-800 shadow-xl hover:shadow-2xl hover:-translate-y-1 cursor-pointer",
+    outline: "border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-700 cursor-pointer",
+    white: "bg-white text-emerald-900 hover:bg-emerald-50 shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer",
   };
 
   return (
@@ -113,19 +123,19 @@ const SponsorDisplay: React.FC<{ sponsor: Sponsor }> = ({ sponsor }) => {
   switch (tier) {
     case 'TITLE':
       containerClass += " h-56 md:h-72 border-emerald-100 hover:border-emerald-300 shadow-[0_10px_40px_-10px_rgba(16,185,129,0.1)] hover:shadow-[0_20px_50px_-10px_rgba(16,185,129,0.2)]";
-      imageClass += " max-h-[75%] max-w-[80%] opacity-90 group-hover:opacity-100 group-hover:scale-105";
+      imageClass += " max-h-[75%] max-w-[80%] opacity-90 group-hover:opacity-100 group-hover:scale-105 group-hover:brightness-110";
       break;
     case 'GOLD':
       containerClass += " h-48 md:h-60 border-amber-100 hover:border-amber-300 shadow-[0_10px_30px_-10px_rgba(245,158,11,0.1)] hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.2)]";
-      imageClass += " max-h-[70%] max-w-[75%] opacity-90 group-hover:opacity-100 group-hover:scale-105";
+      imageClass += " max-h-[70%] max-w-[75%] opacity-90 group-hover:opacity-100 group-hover:scale-105 group-hover:brightness-110";
       break;
     case 'SILVER':
       containerClass += " h-36 md:h-44 border-slate-100 hover:border-slate-300 hover:shadow-lg";
-      imageClass += " max-h-[60%] max-w-[70%] opacity-80 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105";
+      imageClass += " max-h-[60%] max-w-[70%] opacity-80 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 group-hover:brightness-110";
       break;
     case 'BRONZE':
       containerClass += " h-28 md:h-36 border-orange-50 hover:border-orange-200 hover:shadow-md";
-      imageClass += " max-h-[55%] max-w-[65%] opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100";
+      imageClass += " max-h-[55%] max-w-[65%] opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 group-hover:brightness-110";
       break;
   }
 
@@ -155,11 +165,16 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const onMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    handleSmoothScroll(e, href);
+    setIsOpen(false);
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'glass-nav shadow-lg py-3' : 'bg-transparent py-6'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo Area */}
-        <a href="#home" className="flex items-center gap-3 group">
+        <a href="#home" onClick={(e) => handleSmoothScroll(e, '#home')} className="flex items-center gap-3 group cursor-pointer">
           <div className={`p-2.5 rounded-xl transition-colors duration-300 ${scrolled ? 'bg-emerald-700 text-white' : 'bg-white/90 text-emerald-800'}`}>
              <Award size={26} />
           </div>
@@ -179,7 +194,8 @@ const Navbar: React.FC = () => {
             <a 
               key={item.label} 
               href={item.href}
-              className={`text-sm font-bold uppercase tracking-widest hover:text-emerald-400 transition-colors duration-300 relative group ${scrolled ? 'text-slate-600' : 'text-white/90'}`}
+              onClick={(e) => handleSmoothScroll(e, item.href)}
+              className={`text-sm font-bold uppercase tracking-widest hover:text-emerald-400 transition-colors duration-300 relative group cursor-pointer ${scrolled ? 'text-slate-600' : 'text-white/90'}`}
             >
               {item.label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full"></span>
@@ -189,7 +205,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+          className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X className={scrolled ? "text-slate-800" : "text-white"} /> : <Menu className={scrolled ? 'text-slate-800' : 'text-white'} />}
@@ -198,13 +214,13 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-2xl md:hidden flex flex-col p-6 gap-4 animate-fade-in border-t border-slate-100">
+        <div className="absolute top-full left-0 w-full bg-white shadow-2xl md:hidden flex flex-col p-6 gap-4 animate-fade-in border-t border-slate-100 max-h-[85vh] overflow-y-auto">
            {NAV_ITEMS.map((item) => (
             <a 
               key={item.label} 
               href={item.href}
-              className="text-slate-600 font-bold uppercase tracking-wider p-3 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
+              onClick={(e) => onMobileNavClick(e, item.href)}
+              className="text-slate-600 font-bold uppercase tracking-wider p-3 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors cursor-pointer"
             >
               {item.label}
             </a>
@@ -358,9 +374,9 @@ export default function App() {
                   </p>
                   <div className="pt-6 border-t border-slate-100 mt-auto">
                     {event.galleryUrl ? (
-                      <a href={event.galleryUrl} className="text-emerald-700 font-bold text-sm uppercase tracking-wider flex items-center gap-2 hover:gap-3 transition-all group/link" target="_blank" rel="noopener noreferrer">
-                        View Gallery <ArrowRight size={16} className="text-emerald-400 group-hover/link:text-emerald-600" />
-                      </a>
+                      <span className="text-emerald-700/50 font-bold text-sm uppercase tracking-wider flex items-center gap-2 cursor-default group/link">
+                        View Gallery <ArrowRight size={16} className="text-emerald-400/50" />
+                      </span>
                     ) : (
                       <span className="text-slate-300 text-sm italic">Gallery coming soon</span>
                     )}
@@ -462,67 +478,55 @@ export default function App() {
         </div>
       </section>
 
-      {/* Payment / Donation Info */}
-      <section className="py-24 bg-emerald-950 text-white relative">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-emerald-900/30 to-transparent"></div>
+      {/* Payment / Donation Info - MODIFIED */}
+      <section className="py-24 bg-emerald-950 text-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-emerald-900/50 to-transparent pointer-events-none"></div>
+
         <div className="container mx-auto px-6 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
-            <div className="lg:w-1/2">
-              <div className="inline-block p-2 bg-emerald-900/50 rounded-lg mb-6">
-                <Heart className="text-emerald-400 w-8 h-8 fill-emerald-400/20" />
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block p-3 bg-emerald-900/50 rounded-2xl mb-8 border border-emerald-800/50 shadow-lg">
+              <Heart className="text-emerald-400 w-10 h-10 fill-emerald-400/20 mx-auto" />
+            </div>
+            
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">Support Our Cause</h2>
+            
+            <p className="text-emerald-100/80 text-lg md:text-xl mb-12 leading-relaxed font-light max-w-2xl mx-auto">
+              Your direct contributions help us plan better events and donate more to the charities that need it most. Every contribution makes a tangible difference in our community.
+            </p>
+
+            {/* Replacement Content */}
+            <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left">
+              {/* Option 1: Sponsorship */}
+              <div className="bg-emerald-900/30 backdrop-blur-md border border-emerald-800/50 p-8 rounded-2xl hover:bg-emerald-800/30 transition-all duration-300 group shadow-lg">
+                  <div className="w-12 h-12 bg-emerald-800/50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-emerald-700/30">
+                      <Award className="text-emerald-300 w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Become a Sponsor</h3>
+                  <p className="text-emerald-200/70 text-sm mb-6 leading-relaxed">
+                      Partner with us for our next gala. Gain visibility while supporting vital local causes.
+                  </p>
+                  <button type="button" className="inline-flex items-center text-emerald-300 font-semibold text-sm uppercase tracking-wider hover:text-white transition-colors group-hover:translate-x-1 cursor-default">
+                      Inquire Now <ArrowRight size={16} className="ml-2" />
+                  </button>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Support Our Cause</h2>
-              <p className="text-emerald-100/80 text-lg mb-10 leading-relaxed font-light">
-                Your direct contributions help us plan better events and donate more to the charities that need it most. Every contribution makes a tangible difference in our community.
-              </p>
-              
-              <div className="bg-emerald-900/40 backdrop-blur-sm rounded-2xl p-8 border border-emerald-800 hover:border-emerald-700 transition-colors">
-                 <div className="flex items-start gap-6">
-                    <div className="p-3 bg-emerald-500/10 rounded-xl">
-                       <CreditCard className="w-8 h-8 text-emerald-300" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-xl mb-2 text-white">Bank Transfer</h4>
-                      <p className="text-emerald-200/80 text-sm uppercase tracking-wider font-semibold mb-4">Bank of Butterfield</p>
-                      <div className="space-y-3">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-emerald-950/50 rounded-lg border border-emerald-800/50">
-                          <span className="text-sm text-emerald-300 font-medium">USD Savings</span>
-                          <span className="font-mono text-white select-all">8401753660020</span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-emerald-950/50 rounded-lg border border-emerald-800/50">
-                          <span className="text-sm text-emerald-300 font-medium">KYD Chequing</span>
-                          <span className="font-mono text-white select-all">1361753660019</span>
-                        </div>
-                      </div>
-                    </div>
-                 </div>
+
+              {/* Option 2: Direct Donation */}
+              <div className="bg-emerald-900/30 backdrop-blur-md border border-emerald-800/50 p-8 rounded-2xl hover:bg-emerald-800/30 transition-all duration-300 group shadow-lg">
+                   <div className="w-12 h-12 bg-emerald-800/50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-emerald-700/30">
+                      <Users className="text-emerald-300 w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Make a Donation</h3>
+                  <p className="text-emerald-200/70 text-sm mb-6 leading-relaxed">
+                      Contact us directly for wire transfer details or to purchase tickets for upcoming events.
+                  </p>
+                  <button type="button" className="inline-flex items-center text-emerald-300 font-semibold text-sm uppercase tracking-wider hover:text-white transition-colors group-hover:translate-x-1 cursor-default">
+                      Contact Us <ArrowRight size={16} className="ml-2" />
+                  </button>
               </div>
             </div>
             
-            <div className="lg:w-1/2 w-full">
-               <div className="bg-white text-slate-800 p-8 md:p-10 rounded-3xl shadow-2xl max-w-md mx-auto relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-blue-500"></div>
-                  <h3 className="text-2xl font-bold mb-2 text-center text-slate-800">Reference Details</h3>
-                  <p className="text-sm text-slate-500 mb-8 text-center">Please use these details for your transfer.</p>
-                  
-                  <div className="space-y-6">
-                     <div>
-                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Account Name</label>
-                       <div className="p-4 bg-slate-50 rounded-xl text-slate-700 font-semibold border border-slate-100">Green Tie Charitable Association</div>
-                     </div>
-                     <div>
-                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Address</label>
-                       <div className="p-4 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">PO Box 2681, Grand Cayman, KY1 1111</div>
-                     </div>
-                     <div className="pt-4 border-t border-slate-100">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Confirmation</label>
-                        <p className="text-xs text-slate-500 leading-relaxed">
-                          Please email your Name & No of Tickets to <a href="mailto:greentiegalacayman@gmail.com" className="text-emerald-600 font-bold hover:underline">greentiegalacayman@gmail.com</a> once payment is made.
-                        </p>
-                     </div>
-                  </div>
-               </div>
-            </div>
           </div>
         </div>
       </section>
@@ -544,12 +548,12 @@ export default function App() {
                 Dedicated to supporting local causes through elegant events and community partnership in the Cayman Islands.
               </p>
               <div className="space-y-4">
-                 <a href="mailto:greentiegalacayman@gmail.com" className="flex items-center gap-4 group transition-colors">
+                 <div className="flex items-center gap-4 group transition-colors cursor-default">
                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all">
                      <Mail size={18} />
                    </div>
                    <span className="text-slate-300 group-hover:text-white transition-colors text-sm">greentiegalacayman@gmail.com</span>
-                 </a>
+                 </div>
                  <div className="flex items-center gap-4 group">
                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-emerald-500">
                      <MapPin size={18} />
@@ -565,7 +569,11 @@ export default function App() {
               <ul className="space-y-4">
                 {NAV_ITEMS.map(item => (
                   <li key={item.label}>
-                    <a href={item.href} className="hover:text-emerald-400 transition-colors flex items-center gap-2 text-sm font-medium">
+                    <a 
+                      href={item.href} 
+                      onClick={(e) => handleSmoothScroll(e, item.href)}
+                      className="hover:text-emerald-400 transition-colors flex items-center gap-2 text-sm font-medium"
+                    >
                       <ArrowRight size={14} className="text-emerald-700" /> {item.label}
                     </a>
                   </li>
@@ -580,21 +588,41 @@ export default function App() {
                 Follow us on social media for the latest updates, event photos, and community news.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="w-12 h-12 rounded-full bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white flex items-center justify-center transition-all hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center cursor-default">
                   <Instagram size={22} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white flex items-center justify-center transition-all hover:-translate-y-1">
+                </div>
+                <div className="w-12 h-12 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center cursor-default">
                   <Facebook size={22} />
-                </a>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-            <p>&copy; {new Date().getFullYear()} Green Tie Gala. All rights reserved.</p>
-            <div className="flex items-center gap-1 mt-4 md:mt-0">
-               Proudly serving the <span className="text-emerald-500">Cayman Islands</span> community
-            </div>
+          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-4">
+             {/* Left Side: Copyright */}
+             <p className="text-xs text-slate-600 order-3 md:order-1 text-center md:text-left">
+               &copy; {new Date().getFullYear()} Green Tie Gala. All rights reserved.
+             </p>
+
+             {/* Center: Designing Dose */}
+             <div className="flex flex-col items-center order-1 md:order-2">
+                <span className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">
+                  Website Created and Powered by
+                </span>
+                <a 
+                  href="https://designingdose.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="font-['Playfair_Display'] text-base md:text-lg text-emerald-200/80 hover:text-emerald-400 transition-colors tracking-wide"
+                >
+                  Designing Dose
+                </a>
+             </div>
+
+             {/* Right Side: Community Text */}
+             <div className="flex items-center gap-1 text-xs text-slate-600 order-2 md:order-3">
+                Proudly serving the <span className="text-emerald-500">Cayman Islands</span> community
+             </div>
           </div>
         </div>
       </footer>
